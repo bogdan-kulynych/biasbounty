@@ -1,7 +1,7 @@
-rel_train_data_path = "../data/train"
-rel_test_data_path = "../data/test"
-rel_model_path = "../models"
-rel_submission_path = "../out/submission.json"
+rel_train_data_path = "data/train"
+rel_test_data_path = "data/test"
+rel_model_path = "models"
+rel_submission_path = "out/submission.json"
 
 model_type = "dummy"  # vggface2
 tasks = ["skin_tone", "gender", "age"]
