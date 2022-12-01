@@ -1,13 +1,6 @@
 # +
-rel_train_data_path = "../data/train"
-rel_test_data_path = "../data/test"
-rel_model_path = "../models"
+from config import *
 
-tasks = ["skin_tone", "gender", "age"]
-img_size = 160
-batch_size = 4
-model_type = "dummy"  # vggface2
-do_not_use_all_examples = True  # for debugging
 # -
 
 # %load_ext autoreload
@@ -44,10 +37,10 @@ MODEL_PATH = pathlib.Path.cwd() / rel_model_path
 
 # +
 train_data = pd.read_csv(TRAIN_DATA_PATH / "labels.csv").dropna()
-test_data = pd.read_csv(TEST_DATA_PATH / "labels.csv").dropna()
+# test_data = pd.read_csv(TEST_DATA_PATH / "labels.csv").dropna()
 
 train_labels_by_task = get_labels(train_data, tasks)
-test_labels_by_task = get_labels(test_data, tasks)
+# test_labels_by_task = get_labels(test_data, tasks)
 
 num_classes_by_task = {task: train_labels_by_task[task].shape[1] for task in tasks}
 print(f"Classes: {num_classes_by_task}")
@@ -55,7 +48,7 @@ print(f"Classes: {num_classes_by_task}")
 
 # +
 if do_not_use_all_examples:
-    train_data = train_data.iloc[:30]
+    train_data = train_data.iloc[:1000]
 
 train_loaders = get_loaders(
     TRAIN_DATA_PATH,
@@ -77,16 +70,18 @@ def train_func(model_func, data_loader):
 
     criterion = torch.nn.CrossEntropyLoss()
     model.train()
-    for batch_idx, (data, target_onehot) in enumerate(data_loader):
-        output = model(data)
-        target = torch.argmax(target_onehot, dim=1)
-        loss = criterion(output, target)
-        # compute gradient and do SGD step
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        if batch_idx % 10 == 0:
-            print("batch={}, loss={}".format(batch_idx, loss.item()))
+    for epoch in range(epochs):
+        it = tqdm.tqdm(enumerate(data_loader))
+        for batch_idx, (data, target_onehot) in it:
+            output = model(data)
+            target = torch.argmax(target_onehot, dim=1)
+            loss = criterion(output, target)
+            # compute gradient and do SGD step
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            if batch_idx % 10 == 0:
+                it.set_description(f"{batch_idx=}, {loss.item()=}")
 
     return model
 

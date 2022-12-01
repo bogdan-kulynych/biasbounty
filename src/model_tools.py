@@ -1,3 +1,5 @@
+import numpy as np
+
 import pathlib
 import torch
 
@@ -52,12 +54,22 @@ class ModelTaskSet:
 
     def load(self):
         for model_file_path in self.model_path.iterdir():
+            ext = model_file_path.suffix
+            if ext != ".pth":
+                continue
             task = model_file_path.stem
             print(f"Loading {model_file_path}")
             model = self.model_func_by_task[task]()
             model.load_state_dict(torch.load(model_file_path))
             self.models[task] = model
 
-    def predict(self, X):
-        preds = [model.predict(X) for model in self.models.values()]
-        return preds
+    def predict(self, data_loaders):
+        preds_by_task = {}
+        for task, data_loader in data_loaders.items():
+            preds_by_task[task] = []
+            for x, y in data_loader:
+                batch_preds = self.models[task](x).detach().numpy()
+                preds_by_task[task].append(batch_preds.argmax(axis=1))
+            preds_by_task[task] = np.concatenate(preds_by_task[task])
+
+        return preds_by_task
