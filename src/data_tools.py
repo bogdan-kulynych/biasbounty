@@ -59,7 +59,8 @@ def get_task_loader(data_path, data, task_labels, img_size, batch_size):
 
     X = np.array(X)
     y = np.array(y)
-    print(f"{X.shape=} {y.shape=}")
+    # print(f"{X.shape=} {y.shape=}")
+    print("X.shape={} y.shape={}".format(X.shape, y.shape))
 
     transform = transforms.Compose([transforms.Resize(img_size), transforms.ToTensor()])
     dataset = MyDataset(X, y, transform=transform)
@@ -71,6 +72,7 @@ def get_task_loader(data_path, data, task_labels, img_size, batch_size):
 def get_loaders(data_path, data, labels, *args, **kwargs):
     loaders = {}
     for task, task_labels in labels.items():
-        print(f"Creating data loader for {task}")
+        # print(f"Creating data loader for {task}")
+        print("Creating data loader for {}".format(task))
         loaders[task] = get_task_loader(data_path, data, task_labels, *args, **kwargs)
     return loaders

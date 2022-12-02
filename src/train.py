@@ -81,7 +81,8 @@ def train_func(model_func, data_loader):
             loss.backward()
             optimizer.step()
             if batch_idx % 10 == 0:
-                it.set_description(f"{batch_idx=}, {loss.item()=}")
+                # it.set_description(f"{batch_idx=}, {loss.item()=}")
+                print("batch_idx={}, loss={}".format(batch_idx, loss.item()))
 
     return model
 
