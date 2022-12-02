@@ -39,26 +39,30 @@ class ModelTaskSet:
         self.model_path = pathlib.Path(model_path)
         self.models = {}
 
-    def fit_task(self, task_name, train_func, *args, **kwargs):
-        model_func = self.model_func_by_task[task_name]
-        self.models[task_name] = train_func(model_func, *args, **kwargs)
+    def fit_task(self, task, train_func, *args, **kwargs):
+        model_func = self.model_func_by_task[task]
+        model_path = self.model_path / f"{task}.pth"
+        self.models[task] = train_func(model_path, model_func, *args, **kwargs)
 
     def save(self):
         if not self.models:
             raise ValueError("No models to save.")
 
-        for model_name, model in self.models.items():
-            filename = self.model_path / f"{model_name}.pth"
+        for task, model in self.models.items():
+            filename = self.model_path / f"{task}.pth"
             print(f"Saving {filename}")
             torch.save(model.state_dict(), filename)
 
     def load(self):
         for model_file_path in self.model_path.iterdir():
+            print(model_file_path)
             ext = model_file_path.suffix
             if ext != ".pth":
                 continue
             task = model_file_path.stem
-            print(f"Loading {model_file_path}")
+            if task not in self.model_func_by_task:
+                continue
+            print(f"Loading {task} from {model_file_path}")
             model = self.model_func_by_task[task]()
             model.load_state_dict(torch.load(model_file_path))
             self.models[task] = model
