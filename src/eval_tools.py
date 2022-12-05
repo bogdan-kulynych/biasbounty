@@ -26,5 +26,6 @@ def get_score(results):
             + 4 * acc["age"] * (1 - disp["age"] ** 2)
             + 10 * acc["skin_tone"] * (1 - disp["skin_tone"] ** 5)
         )
+        return score
     except KeyError:
         raise ValueError("Not all metrics are available.")

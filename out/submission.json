@@ -1,1 +1,1 @@
-{"submission_name": "ky", "score": 0.0, "metrics": {"accuracy": {"skin_tone": 0.16666666666666666, "gender": 0.6, "age": 0.4666666666666667}, "disparity": {"skin_tone": 1.0, "gender": 1.0, "age": 1.0}}}
+{"submission_name": "atleastwetried", "score": 6.7804492609323095, "metrics": {"accuracy": {"skin_tone": 0.2723333333333333, "gender": 0.8156666666666667, "age": 0.661}, "disparity": {"skin_tone": 0.21069431626947507, "gender": 0.06476967604700634, "age": 0.2052872683929159}}}
